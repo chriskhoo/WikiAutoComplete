@@ -2,6 +2,7 @@ WikiAutoComplete
 =================
 App 
 ---
+To view this app, you might have to allow your browser to run scripts from an unauthenticated source (me)
 [Link to application](http://chriskhoo.github.io/WikiAutoComplete)
 
 
