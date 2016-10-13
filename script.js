@@ -41,12 +41,13 @@ $(function(){
     });
   };
 
-  /* click button event */
+  // click button event
   $('#button-search').click(function(event){
     event.preventDefault();
     updateResults();
   });
 
+  // search function run by search button or clicking on auto complete option
   var updateResults = function(){
     // clear previous results
     $('.results').empty();
@@ -102,8 +103,8 @@ $(function(){
       {
         $('.results').append("<li>Sorry, we had trouble processing your request. Please try again.</li>");
         console.log(textStatus + ' occurred during your request: '+ errorThrown );
-      })
-  }; // close runWiki function
+      }) // close fail function
+  }; // close runWiki results function
 
 
   /* clearing the results if user press Backspace */
@@ -112,6 +113,6 @@ $(function(){
       displayAfterSearchLine(0, 0);
       $('.results').empty();
     }
-  });
+  }); // close clear results function
 
 });
