@@ -41,7 +41,6 @@ $(function(){
     });
   };
 
-
   /* click button event */
   $('#button-search').click(function(event){
     event.preventDefault();
@@ -58,36 +57,52 @@ $(function(){
   /* search value in wikipedia and parse it to a list */
   var runWiki = function(val) {
     displayAfterSearchLine(0.3, 1);
+    $.ajax({
+      url: "http://en.wikipedia.org/w/api.php",
+      dataType: "jsonp",
+      data: {
+          'action': "opensearch",
+          'format': "json",
+          'search': val,
+      },
+      beforeSend: function() {
+      $('.loader').show();
+      }
+    }) // close ajax
+      .always(function(){
+        $('.loader').hide();
+      })
+      .done(function(data) {
+      // go over all values
+        for (var i = 0; i < data[1].length; i++) {
+          var title = data[1][i];
+          // if title ends with - omit it
+          if (title.length - 1 === '-') {
+            title = title.substring(0, str.length - 1);
+          }
 
-    var URL_wiki = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + val + '&callback=?';
+          // if there is no description - add 'No Description'
+          var desc;
+          if (data[2][i] !== '') {
+            desc = data[2][i];
+          } else {
+            desc = 'No Description';
+          }
 
-    $.getJSON(URL_wiki, function(data) {
+          // define page link
+          var link = data[3][i];
+          // declare th<li> html
+          var listLi = '<li><a href="' + link + '" target="_blank"><span class="title">' + title + '</span><span class="desc"> - ' + desc + '</span></a></li>';
 
-    // go over all values
-      for (var i = 0; i < data[1].length; i++) {
-        var title = data[1][i];
-        // if title ends with - omit it
-        if (title.length - 1 === '-') {
-          title = title.substring(0, str.length - 1);
-        }
-
-        // if there is no description - add 'No Description'
-        var desc;
-        if (data[2][i] !== '') {
-          desc = data[2][i];
-        } else {
-          desc = 'No Description';
-        }
-
-        // define page link
-        var link = data[3][i];
-        // declare th<li> html
-        var listLi = '<li><a href="' + link + '" target="_blank"><span class="title">' + title + '</span><span class="desc"> - ' + desc + '</span></a></li>';
-
-        // append to <ul>
-        $('.results').append(listLi);
-      } // close 'for' loop
-    }); // close JSON call
+          // append to <ul>
+          $('.results').append(listLi);
+        } // close 'for' loop
+      }) // close done function
+      .fail(function(request, textStatus, errorThrown)
+      {
+        $('.results').append("<li>Sorry, we had trouble processing your request. Please try again.</li>");
+        console.log(textStatus + ' occurred during your request: '+ errorThrown );
+      })
   }; // close runWiki function
 
 
