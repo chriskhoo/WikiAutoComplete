@@ -7,7 +7,7 @@ $(function(){
   // autocomplete docs - http://api.jqueryui.com/autocomplete/
 
   $('#input-search').autocomplete({
-    minLength: 3,
+    minLength: 2,
     delay: 800,
     source: function(request, response){
       // note request is an object with term as it's only key
@@ -25,17 +25,13 @@ $(function(){
           response(data[1]);
         }
       })
-    }
+    },
+    // create function to run search on clicking the auto complete option
+    select: function(event, ui) {
+        $("#input-search").val(ui.item.label);
+        updateResults(); }
   })
   // note an alternative method not requiring UI library can be found here: https://simplestepscode.com/autocomplete-data-tutorial/
-
-  /* clearing the results if user press Backspace */
-  $('input#input-search').keyup(function(e) {
-    if (e.which === 8) {
-      displayAfterSearchLine(0, 0);
-      $('.results').empty();
-    }
-  });
 
   // fade in (val=1) or out (val=0) the after-search-line with chosen speed
   var displayAfterSearchLine = function(speed, val) {
@@ -45,14 +41,19 @@ $(function(){
     });
   };
 
+
   /* click button event */
-  $('button#button-search').click(function(event) {
+  $('#button-search').click(function(event){
     event.preventDefault();
+    updateResults();
+  });
+
+  var updateResults = function(){
     // clear previous results
     $('.results').empty();
     // run the search function with the text in the input field
     runWiki($('input#input-search').val());
-  });
+  }
 
   /* search value in wikipedia and parse it to a list */
   var runWiki = function(val) {
@@ -88,5 +89,14 @@ $(function(){
       } // close 'for' loop
     }); // close JSON call
   }; // close runWiki function
+
+
+  /* clearing the results if user press Backspace */
+  $('input#input-search').keyup(function(e) {
+    if (e.which === 8) {
+      displayAfterSearchLine(0, 0);
+      $('.results').empty();
+    }
+  });
 
 });
